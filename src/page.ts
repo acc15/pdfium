@@ -48,18 +48,16 @@ export class PDFiumPage {
       render: "bitmap",
     },
   ): Promise<PDFiumPageRender> {
-    const { width: originalWidth, height: originalHeight } = this.getSize();
+    const pageSize = this.getSize();
 
     // You can specify either the scale or the width and height.
-    let width: number;
-    let height: number;
-    if ("scale" in options) {
-      width = Math.floor(originalWidth * options.scale);
-      height = Math.floor(originalHeight * options.scale);
-    } else {
-      width = options.width;
-      height = options.height;
-    }
+    const scale = options.scale ?? 1;
+    const originalWidth = options.width ?? pageSize.width
+    const originalHeight = options.height ?? pageSize.height
+    const width = Math.floor(originalWidth * scale);
+    const height = Math.floor(originalHeight * scale);
+    const x = options.x ?? 0;
+    const y = options.y ?? 0;
 
     const buffSize = width * height * BYTES_PER_PIXEL;
 
@@ -79,10 +77,10 @@ export class PDFiumPage {
     this.module._FPDF_RenderPageBitmap(
       bitmap,
       this.pageIdx,
-      0, // start_x
-      0, // start_y
-      width, // size_x
-      height, // size_y
+      x, // start_x
+      y, // start_y
+      originalWidth, // size_x
+      originalHeight, // size_y
       0, // rotate (0, normal)
       FPDFRenderFlag.REVERSE_BYTE_ORDER | FPDFRenderFlag.ANNOT | FPDFRenderFlag.LCD_TEXT, // flags
     );
@@ -100,10 +98,10 @@ export class PDFiumPage {
     });
 
     return {
-      width: width,
-      height: height,
-      originalHeight: originalHeight,
-      originalWidth: originalWidth,
+      width,
+      height,
+      originalWidth,
+      originalHeight,
       data: image,
     };
   }

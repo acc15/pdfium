@@ -6,15 +6,12 @@ export type PDFiumPageRenderOptions = PDFiumRenderOptions;
 export type PDFiumPageRenderCallback = (options: PDFiumPageRenderOptions) => Promise<Uint8Array>;
 export type PDFiumPageRenderParams = {
   render: PDFiumPageRenderFunction;
-} & (
-  | {
-      scale: number;
-    }
-  | {
-      width: number;
-      height: number;
-    }
-);
+  scale?: number;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+};
 
 export type PDFiumPageSize = {
   width: number;
